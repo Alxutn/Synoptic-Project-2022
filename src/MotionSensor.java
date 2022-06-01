@@ -1,5 +1,4 @@
 import java.time.LocalDateTime;
-import java.time.Month;
 import java.time.format.DateTimeFormatter;
 import java.util.Random;
 
@@ -20,48 +19,33 @@ public class MotionSensor {
     }
 
     public boolean checkSurroundings(){
-        //fake data about if an object is detected moving nearby
         boolean detected = false;
-
-        compareMonth(lastPing.getMonth());
-
+        //fake data about if an object is detected moving nearby
         int n = rand.nextInt(100);
         if(n == 1) {
             detected = true;
         }
         if(detected){
             LocalDateTime timeDetectedRaw = LocalDateTime.now();
-
-            //if(lastPing){
-                //lastPing = timeDetectedRaw;
-            //}else {
-
-                DateTimeFormatter timeDetected = DateTimeFormatter.ofPattern("dd-MM-yyyy HH:mm:ss");
-                String formattedDate = timeDetectedRaw.format(timeDetected);
-            //}
+            timeComparisons(timeDetectedRaw);
             return true;
         }else{
             return false;
         }
     }
 
-    public void compareMonth(Month inputMonth){
-        if(inputMonth.equals(Month.JUNE)) {
-            System.out.println(inputMonth);
+    public boolean timeComparisons(LocalDateTime inputTime) {
+        //testAgainstTime = testAgainstTime.plusMinutes(5);
+        if(inputTime.isAfter(lastPing)){
+            lastPing = inputTime;
+            //print it out somewhere!!
+            return true;
+        }else{
+            return false;
         }
     }
-    public void compareMinute(int inputMinute){
-        System.out.println(inputMinute);
-    }
-    public void compareYear(int inputYear){
-        System.out.println(inputYear);
-    }
 
-    public void timeComparisons(LocalDateTime inputTime){
-        compareMonth(inputTime.getMonth());
-        compareMinute(inputTime.getMinute());
-        compareYear(inputTime.getYear());
-    }
+
 
     public static void main(String[] args) {
         MotionSensor sensor1 = new MotionSensor("RangerStation1", 0, 0, 0);
