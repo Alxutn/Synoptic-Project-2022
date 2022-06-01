@@ -57,6 +57,12 @@ public class MotionSensor {
         System.out.println(inputYear);
     }
 
+    public void timeComparisons(LocalDateTime inputTime){
+        compareMonth(inputTime.getMonth());
+        compareMinute(inputTime.getMinute());
+        compareYear(inputTime.getYear());
+    }
+
     public static void main(String[] args) {
         MotionSensor sensor1 = new MotionSensor("RangerStation1", 0, 0, 0);
     }
