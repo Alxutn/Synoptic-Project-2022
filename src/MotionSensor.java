@@ -1,5 +1,4 @@
 import java.time.LocalDateTime;
-import java.time.format.DateTimeFormatter;
 import java.util.Random;
 
 
@@ -36,7 +35,8 @@ public class MotionSensor {
 
     public boolean timeComparisons(LocalDateTime inputTime) {
         //testAgainstTime = testAgainstTime.plusMinutes(5);
-        if(inputTime.isAfter(lastPing)){
+        LocalDateTime tempLastPing = lastPing.plusMinutes(5);
+        if(inputTime.isAfter(tempLastPing)){
             lastPing = inputTime;
             //print it out somewhere!!
             return true;
