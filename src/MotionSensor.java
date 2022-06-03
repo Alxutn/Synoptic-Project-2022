@@ -1,5 +1,6 @@
 import java.time.LocalDateTime;
 import java.util.Random;
+import java.time.format.DateTimeFormatter;
 
 
 public class MotionSensor {
@@ -40,9 +41,7 @@ public class MotionSensor {
     public void setyCoord(float value){
         yCoord = value;
     }
-    public void setPreviousSensor(int value){
-        previousSensor = value;
-    }
+    public void setPreviousSensor(int value){ previousSensor = value; }
     public void setLocation(String value){
         location = value;
     }
@@ -50,6 +49,9 @@ public class MotionSensor {
         sensorID = value;
     }
 
+    public String toString(){
+        return location +"ID: "+sensorID+" X Coordinate: "+xCoord+" Y Coordinate "+yCoord+" Connected to sensor "+previousSensor;
+    }
 
     public void checkSurroundings(){
         boolean detected = false;
@@ -62,9 +64,9 @@ public class MotionSensor {
 
         if(detected) {
             LocalDateTime timeDetectedRaw = LocalDateTime.now();
-            boolean newValue = timeComparisons(timeDetectedRaw);
-            if(newValue){
-                System.out.println("Movement Detected at: "+getLocation()+" at: "+lastPing);
+            if(timeComparisons(timeDetectedRaw)){
+                DateTimeFormatter dateFormat = DateTimeFormatter.ofPattern("dd-MM-yyyy HH:mm:ss");
+                System.out.println("Movement Detected at: "+getLocation()+" at: "+lastPing.format(dateFormat));
                 //for next time start looking at CSV.
             }
         }
