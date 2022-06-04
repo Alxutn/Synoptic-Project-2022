@@ -8,6 +8,7 @@ public class MotionSensor {
     float xCoord, yCoord;
     int previousSensor, sensorID;
     LocalDateTime lastPing = LocalDateTime.now();
+    DateTimeFormatter dateFormat = DateTimeFormatter.ofPattern("dd-MM-yyyy HH:mm:ss");
     //for random data
     Random rand = new Random();
 
@@ -50,7 +51,7 @@ public class MotionSensor {
     }
 
     public String toString(){
-        return location +"ID: "+sensorID+" X Coordinate: "+xCoord+" Y Coordinate "+yCoord+" Connected to sensor "+previousSensor;
+        return location +" ID: "+sensorID+" X Coordinate: "+xCoord+" Y Coordinate "+yCoord+" Connected to sensor "+previousSensor+" Last ping: "+lastPing.format(dateFormat);
     }
 
     public void checkSurroundings(){
@@ -65,7 +66,6 @@ public class MotionSensor {
         if(detected) {
             LocalDateTime timeDetectedRaw = LocalDateTime.now();
             if(timeComparisons(timeDetectedRaw)){
-                DateTimeFormatter dateFormat = DateTimeFormatter.ofPattern("dd-MM-yyyy HH:mm:ss");
                 System.out.println("Movement Detected at: "+getLocation()+" at: "+lastPing.format(dateFormat));
                 //for next time start looking at CSV.
             }
@@ -84,6 +84,10 @@ public class MotionSensor {
         }else{
             return false;
         }
+    }
+
+    public String convertToCSV(){
+        return location+','+sensorID+','+xCoord+','+yCoord+','+previousSensor+'\n';
     }
 
 

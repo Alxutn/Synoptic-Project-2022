@@ -1,11 +1,13 @@
+import java.io.*;
 import java.util.Scanner;
 import java.util.ArrayList;
-import java.io.*;
+
 
 public class Main {
     static ArrayList<MotionSensor> sensorArrayList = new ArrayList<>();
+    static Scanner usrInput = new Scanner(System.in);
 
-    public void addSensorUser(){
+    public static void addSensorUser(){
         Scanner scannerObj = new Scanner(System.in);
         System.out.println("Please name this sensor: \n");
         String inputLocation = scannerObj.nextLine();
@@ -20,64 +22,97 @@ public class Main {
     }
 
     public static void addExistingSensors() {
-        String inputLocation = null, tempString;
-        int inputID = 0, previousSensor = 0;
-        float xCoord = 0, yCoord = 0;
+        String inputLocation;
+        int inputID, previousSensor;
+        float xCoord, yCoord;
+        String line;
+        String splitBy = ",";
         try {
-            Scanner sc = new Scanner(new File("sensors.csv"));
-            sc.useDelimiter(",");
-            while (sc.hasNextLine()) {
-                for(int i = 0; i < 5; i++) {
-                    if (i == 0) {
-                        tempString = sc.next();
-                        System.out.println(tempString);
-
-                    } else if (i == 1) {
-                        tempString = sc.next();
-                        System.out.println(tempString);
-                        // inputID = Integer.parseInt(tempString);
-                        // inputID = sc.nextInt();
-                    } else if (i == 2) {
-                        tempString = sc.next();
-                        System.out.println(tempString);
-
-                        //xCoord = Float.parseFloat(tempString);
-                        //xCoord = sc.nextFloat();
-                    } else if (i == 3) {
-                        tempString = sc.next();
-                        System.out.println(tempString);
-
-                        //yCoord = Float.parseFloat(tempString);
-                        //yCoord = sc.nextFloat();
-                    } else if (i == 4) {
-                        tempString = sc.next();
-                        System.out.println(tempString);
-                        //previousSensor = Integer.parseInt(tempString);
-                        //previousSensor = sc.nextInt();
-                        System.out.println("end of loop");
-                    }
-                }
+            BufferedReader br = new BufferedReader(new FileReader("sensors.csv"));
+            while((line = br.readLine()) != null){
+                String[] sensor = line.split(splitBy);
+                inputLocation = sensor[0];
+                inputID = Integer.parseInt(sensor[1]);
+                xCoord = Float.parseFloat(sensor[2]);
+                yCoord = Float.parseFloat(sensor[3]);
+                previousSensor = Integer.parseInt(sensor[4]);
                 sensorArrayList.add(new MotionSensor(inputLocation, inputID, xCoord, yCoord, previousSensor));
             }
-            sc.close();
-        }catch (FileNotFoundException e) {
-            FileNotFoundException();
+        } catch (IOException e) {
+            e.printStackTrace();
         }
     }
 
-    private static void FileNotFoundException(){
-        System.out.println("the sensors file has not been found");
-        System.out.println("Please attempt to find the file restart the program");
+    private static void introductionMessage(){
+        System.out.println("""
+
+                Sensor System 2022 (c) University of East Anglia.\s
+                Welcome to the sensor system, sensor notifications are automatic.\s
+                Please select an option by typing in a number below:\s""");
+    }
+
+    private static void displayOptions(){
+        System.out.println("""
+                1. Check status of all sensors.
+                2. Add additional sensor.\s
+                3. Remove sensor(maybe if we have time).\s
+                4. Exit and save""");
+    }
+
+    private static void displaySensors(){
+        for (MotionSensor motionSensor : sensorArrayList) {
+            System.out.println(motionSensor);
+        }
+    }
+
+    private static void exitProgram() throws IOException {
+        new FileOutputStream("sensors.csv").close();
+        PrintWriter writer = new PrintWriter("sensors.csv");
+        for (MotionSensor motionSensor : sensorArrayList) {
+            String data = motionSensor.convertToCSV();
+            writer.write(data);
+        }
+        writer.close();
+    }
+
+    private static void userOptions(){
+        while(!usrInput.hasNextInt()){
+            System.out.println("That is not an option, try again");
+            usrInput.next();
+            displayOptions();
+        }
+        int usrOption = usrInput.nextInt();
+        switch (usrOption) {
+            case 1 -> {
+                System.out.println("Checking status...\n");
+                displaySensors();
+                System.out.println("\n");
+            }
+            case 2 -> {
+                System.out.println("Adding additional sensor");
+                addSensorUser();
+            }
+            case 3 -> System.out.println("Removing Sensor");
+            case 4 -> {
+                System.out.println("Saving and exiting...");
+                try {
+                    exitProgram();
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+                System.exit(0);
+            }
+            default -> System.out.println("Invalid option");
+        }
     }
 
 
     public static void main(String[] args) {
-       //MotionSensor sensor1 = new MotionSensor("RangerStation1",1, 0, 0, 0);
         addExistingSensors();
-        /*
-        for(int i = 0; i < sensorArrayList.size(); i++){
-            System.out.println(sensorArrayList.get(i));
+        introductionMessage();
+        while(true) {
+            displayOptions();
+            userOptions();
         }
-         */
     }
 }
