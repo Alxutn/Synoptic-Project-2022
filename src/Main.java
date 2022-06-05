@@ -1,6 +1,7 @@
 import java.io.*;
 import java.util.Scanner;
 import java.util.ArrayList;
+import java.security.SecureRandom;
 
 
 public class Main {
@@ -17,7 +18,7 @@ public class Main {
         float yCoord = scannerObj.nextFloat();
         System.out.println("Please provide the ID of the sensor the new sensor will be connected to: \n");
         int previousSensor = scannerObj.nextInt();
-        int inputID = sensorArrayList.size();
+        int inputID = sensorArrayList.size() + 1;
         sensorArrayList.add(new MotionSensor(inputLocation, inputID, xCoord, yCoord, previousSensor));
     }
 
@@ -110,9 +111,22 @@ public class Main {
     public static void main(String[] args) {
         addExistingSensors();
         introductionMessage();
-        while(true) {
+        SecureRandom random = new SecureRandom();
+        /*
+        for (; ; ) {
             displayOptions();
             userOptions();
+        }
+
+         */
+        //thread thing below
+        for (int i = 0; i < sensorArrayList.size(); i++) {
+            sensorArrayList.get(i).setRandomSeed(i);
+        }
+        for(;;) {
+            for (int i = 0; i < sensorArrayList.size(); i++) {
+                sensorArrayList.get(i).checkSurroundings();
+            }
         }
     }
 }

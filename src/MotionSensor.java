@@ -10,7 +10,8 @@ public class MotionSensor {
     LocalDateTime lastPing = LocalDateTime.now();
     DateTimeFormatter dateFormat = DateTimeFormatter.ofPattern("dd-MM-yyyy HH:mm:ss");
     //for random data
-    Random rand = new Random();
+    //Random rand = new Random();
+    Random rand;
 
     public MotionSensor(String inputLocation, int inputSensorID, float inputXCoord, float inputYCoord, int inputPreviousSensor){
         location = inputLocation;
@@ -49,16 +50,21 @@ public class MotionSensor {
     public void setSensorID(int value){
         sensorID = value;
     }
+    public void setRandomSeed(long value){
+        this.rand = new Random(value);
+    }
 
     public String toString(){
         return location +" ID: "+sensorID+" X Coordinate: "+xCoord+" Y Coordinate "+yCoord+" Connected to sensor "+previousSensor+" Last ping: "+lastPing.format(dateFormat);
     }
 
+
+
     public void checkSurroundings(){
         boolean detected = false;
-
+        //System.out.println("inside");
         //fake data about if an object is detected moving nearby
-        int n = rand.nextInt(100);
+        int n = this.rand.nextInt(100);
         if(n == 1) {
             detected = true;
         }
@@ -70,13 +76,15 @@ public class MotionSensor {
                 //for next time start looking at CSV.
             }
         }
+        detected = false;
     }
 
     public boolean timeComparisons(LocalDateTime inputTime) {
         //testAgainstTime = testAgainstTime.plusMinutes(5);
-        LocalDateTime tempLastPing = lastPing.plusMinutes(5);
-        System.out.println(tempLastPing);
-        System.out.println(lastPing);
+        //LocalDateTime tempLastPing = lastPing.plusMinutes(5);
+        LocalDateTime tempLastPing = lastPing.plusSeconds(3);
+        //System.out.println(tempLastPing);
+        //System.out.println(lastPing);
         if(inputTime.isAfter(tempLastPing)){
             lastPing = inputTime;
             //print it out somewhere!!
