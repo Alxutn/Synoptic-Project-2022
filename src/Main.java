@@ -112,14 +112,18 @@ public class Main {
         addExistingSensors();
         introductionMessage();
         SecureRandom random = new SecureRandom();
+
         /*
         for (; ; ) {
             displayOptions();
             userOptions();
         }
 
+
          */
+
         //thread thing below
+
         for (int i = 0; i < sensorArrayList.size(); i++) {
             sensorArrayList.get(i).setRandomSeed(i);
         }
@@ -128,5 +132,7 @@ public class Main {
                 sensorArrayList.get(i).checkSurroundings();
             }
         }
+
+        
     }
 }
