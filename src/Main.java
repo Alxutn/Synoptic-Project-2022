@@ -6,6 +6,8 @@ import java.util.ArrayList;
 public class Main extends Thread{
     static ArrayList<MotionSensor> sensorArrayList = new ArrayList<>(); //List of motion sensors
     static Scanner usrInput = new Scanner(System.in);
+    static Thread t1;
+    static Thread t2;
 
     public static void addSensorUser(){ //Adding a sensor using user input
         Scanner scannerObj = new Scanner(System.in);
@@ -17,9 +19,17 @@ public class Main extends Thread{
         float yCoord = scannerObj.nextFloat();
         System.out.println("Please provide the ID of the sensor the new sensor will be connected to: \n");
         int previousSensor = scannerObj.nextInt();
-        int inputID = sensorArrayList.size() + 1;
+        int inputID = sensorArrayList.get(sensorArrayList.size()-1).getSensorID()+1;
+        t1.interrupt();
         sensorArrayList.add(new MotionSensor(inputLocation, inputID, xCoord, yCoord, previousSensor)); //No need for last ping input here
         sensorArrayList.get(sensorArrayList.size()-1).setLastPing(LocalDateTime.now());
+        try {
+            exitProgram();
+            System.out.println("Please disregard error text");
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        System.exit(0);
     }
 
     public static void addExistingSensors() { //This function will add all sensors present in the csv
@@ -54,11 +64,11 @@ public class Main extends Thread{
                 Please select an option by typing in a number below:\s""");
     }
 
-    private static void displayOptions(){
+    public static void displayOptions(){
         System.out.println("""
                 1. Check status of all sensors.
-                2. Add additional sensor.\s
-                3. Remove sensor(maybe if we have time).\s
+                2. Add additional sensor.(This will cause the program to restart)\s
+                3. Remove sensor. (This will cause the program to restart)\s
                 4. Exit and save""");
     }
 
@@ -92,10 +102,13 @@ public class Main extends Thread{
                 System.out.println("\n");
             }
             case 2 -> {
-                System.out.println("Adding additional sensor");
+                System.out.println("Adding additional sensor...");
                 addSensorUser();
             }
-            case 3 -> System.out.println("Removing Sensor");
+            case 3 -> {
+                System.out.println("Removing Sensor... ");
+                removeSensorInput();
+            }
             case 4 -> {
                 System.out.println("Saving and exiting...");
                 try {
@@ -109,36 +122,54 @@ public class Main extends Thread{
         }
     }
 
-    public void run(){
-
+    public static void removeSensorInput(){
+        System.out.println("Please input the ID of the sensor you would like removed: ");
+        int usrOption = usrInput.nextInt();
+        removeSensor(usrOption);
     }
+
+    public static void removeSensor(int inputID){
+        for(int i = 0; i < sensorArrayList.size(); i++){
+            if(sensorArrayList.get(i).getSensorID() == inputID){
+                t1.interrupt();
+                sensorArrayList.remove(i);
+            }
+        }
+        try {
+            exitProgram();
+            System.out.println("Please disregard error text");
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        System.exit(0);
+    }
+
+    public static void beginProgram(){
+        t1 = new Thread(() -> {
+            for(;;) {
+                for (MotionSensor motionSensor : sensorArrayList) {
+                    motionSensor.checkSurroundings();
+                }
+            }
+        });
+
+        t2 = new Thread(() -> {
+            for (; ; ) {
+                displayOptions();
+                userOptions();
+            }
+        });
+
+
+        t1.start();
+        t2.start();
+    }
+
 
 
     public static void main(String[] args) {
         addExistingSensors();
         introductionMessage();
-
-
-        new Thread(new Runnable() {
-            @Override
-            public void run() {
-                for (; ; ) {
-                    displayOptions();
-                    userOptions();
-                }
-            }
-        }).start();
-
-        //thread below
-        new Thread(new Runnable() {
-            @Override
-            public void run() {
-                for(;;) {
-                    for (int i = 0; i < sensorArrayList.size(); i++) {
-                        sensorArrayList.get(i).checkSurroundings();
-                    }
-                }
-            }
-        }).start();
+        beginProgram();
     }
 }

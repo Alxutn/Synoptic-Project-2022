@@ -73,12 +73,13 @@ public class MotionSensor {
             LocalDateTime timeDetectedRaw = LocalDateTime.now(); //grab a copy of the current time
             if(timeComparisons(timeDetectedRaw)){ //our own comparison for the times
                 System.out.println("Movement Detected at: "+getLocation()+" at: "+lastPing.format(dateFormat));
+                //Main.displayOptions();
             }
         }
     }
 
     public boolean timeComparisons(LocalDateTime inputTime) {          //comparing lastPing and the current time at detection
-        //These are used for testing --> the top line (plusMinutes(5)) is what should be used.
+        //These are used for testing --> the top line: (plusMinutes(5)) is what should be used.
         //LocalDateTime tempLastPing = lastPing.plusMinutes(5);
         //LocalDateTime tempLastPing = lastPing.plusSeconds(3);
         LocalDateTime tempLastPing = lastPing.plusMinutes(1);
