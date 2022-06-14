@@ -95,10 +95,8 @@ public class MotionSensor {
         return location+','+sensorID+','+xCoord+','+yCoord+','+previousSensor+','+lastPing+'\n';
     }
 
-
-
     public static void main(String[] args) {
-        MotionSensor sensor1 = new MotionSensor("RangerStation1", 1, 0, 0, 0);
+
     }
 }
 

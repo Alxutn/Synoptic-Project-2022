@@ -61,7 +61,7 @@ public class Main extends Thread{
 
                 Sensor System 2022 (c) University of East Anglia.\s
                 Welcome to the sensor system, sensor notifications are automatic.\s
-                Please select an option by typing in a number below:\s""");
+                Please select an option by typing in a number below and pressing Enter:\s""");
     }
 
     public static void displayOptions(){
